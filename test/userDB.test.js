@@ -30,8 +30,8 @@ beforeEach(() => {
     fs.writeFileSync(dbPath, JSON.stringify({ users: [] }, null, 2));
 });
 
-//
-test("GIVEN empty database WHEN creating user THEN user can be read back by id (C + R)", () => {
+//If the test fail we risk not being able to create (new) users 
+test("GIVEN empty database WHEN creating user THEN user can be read back by id (Create + Read)", () => {
     //Given
     const created = createUser({ person_id: 10, first_name: "Eva", enabled: true });
     //When
@@ -40,7 +40,8 @@ test("GIVEN empty database WHEN creating user THEN user can be read back by id (
     expect(fetched).toEqual(created);
 });
 
-test("GIVEN multiple users WHEN reading all users THEN returns correct count (R)", () => {
+//If the test fail we risk not being able to read the users in our database
+test("GIVEN multiple users WHEN reading all users THEN returns correct count (Read)", () => {
     //Given
     createUser({ person_id: 11, first_name: "A", enabled: true });
     createUser({ person_id: 12, first_name: "B", enabled: true });
@@ -50,7 +51,8 @@ test("GIVEN multiple users WHEN reading all users THEN returns correct count (R)
     expect(users.length).toBe(2);
 });
 
-test("GIVEN existing user WHEN updating last_name THEN change is persisted (U)", () => {
+//If the test fail we risk not being able to update the users in our database
+test("GIVEN existing user WHEN updating last_name THEN change is persisted (Update)", () => {
     //Given
     createUser({ person_id: 13, first_name: "Niels", last_name: "Old", enabled: true });
     //When
@@ -60,14 +62,16 @@ test("GIVEN existing user WHEN updating last_name THEN change is persisted (U)",
     expect(user.last_name).toBe("New");
 });
 
-test("GIVEN missing user WHEN updating THEN returns null (U negative)", () => {
+//If the test fail we risk not being able to handle updates to non-existing users, which could lead to silent failures in our application
+test("GIVEN missing user WHEN updating THEN returns null (Update negative)", () => {
     //Given + When
     const result = updateUser(999, { last_name: "Nope" });
     //Then
     expect(result).toBeNull();
 });
 
-test("GIVEN existing user WHEN disabling user THEN user is soft-deleted (D = disable)", () => {
+//If the test fail we risk not being able to disable users
+test("GIVEN existing user WHEN disabling user THEN user is soft-deleted (Delete = disable)", () => {
     //Given
     createUser({ person_id: 14, enabled: true });
     //When
